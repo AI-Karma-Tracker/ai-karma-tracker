@@ -1,0 +1,79 @@
+---
+import Base from '../layouts/Base.astro';
+import { logo } from '../lib/logos';
+
+const firstClass = [
+  { name: 'Claude', what: '5-hour & weekly windows, per-model (Fable)', color: '#D97757' },
+  { name: 'ChatGPT', what: 'Per-feature caps (research, image, uploads)', color: '#10A37F' },
+  { name: 'Codex', what: '5-hour & weekly usage windows', color: '#0E8C6E' },
+  { name: 'Cursor', what: 'Monthly fast-request quota', color: '#0B0B0C' },
+  { name: 'Grok', what: 'Per-window request quota', color: '#111827' },
+  { name: 'Perplexity', what: 'Pro-search allowance', color: '#20808D' },
+  { name: 'Gemini', what: 'Login & peak-hour activity', color: '#4285F4' },
+];
+
+// "More via API key" — spend/usage tracking (some live, some planned).
+const more = [
+  ['Windsurf', 0], ['GitHub Copilot', 0], ['Claude Code', 1],
+  ['OpenRouter', 1], ['Mistral', 0], ['DeepSeek', 0], ['Together AI', 0],
+  ['Groq', 0], ['Cohere', 0], ['Replicate', 0], ['Fireworks AI', 0],
+  ['ElevenLabs', 0], ['Midjourney', 0], ['Runway', 0], ['Suno', 0],
+  ['v0', 0], ['Lovable', 0], ['Bolt', 0], ['Poe', 0],
+  ['Kagi', 0], ['You.com', 0], ['Hugging Face', 0], ['xAI API', 0],
+];
+---
+<Base title="Integrations — AI Karma Tracker">
+  <header class="wrap" style="padding:64px 24px 0; text-align:center">
+    <p style="font-size:13px; font-weight:700; letter-spacing:.08em; color:var(--brand-ink)">INTEGRATIONS</p>
+    <h1 style="font-size:44px; margin-top:10px; max-width:680px; margin-left:auto; margin-right:auto">Track your whole AI stack</h1>
+    <p class="muted" style="font-size:18px; max-width:600px; margin:16px auto 0">
+      Six providers are first-class with live limit tracking. More tools connect via API key for spend &amp; usage — all in one place.
+    </p>
+    <div style="margin-top:26px"><a class="btn" href="/#pricing">Get started free</a></div>
+  </header>
+
+  <section class="wrap" style="padding:56px 24px 0">
+    <h2 style="font-size:24px">First-class providers</h2>
+    <p class="muted" style="margin-top:8px">Full limit tracking: live usage, reset times and alerts before you hit a wall.</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px; margin-top:20px">
+      {firstClass.map((p) => (
+        <div class="card reveal" style="padding:18px; display:flex; align-items:center; gap:12px">
+          <Fragment set:html={logo(p.name)} />
+          <div>
+            <b>{p.name}</b>
+            <div class="muted" style="font-size:13.5px">{p.what}</div>
+          </div>
+          <span style="margin-left:auto; font-size:11px; font-weight:700; color:var(--ok); background:#f0fdf4; border:1px solid #bbf7d0; padding:3px 8px; border-radius:999px">LIVE</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap" style="padding:56px 24px 0">
+    <h2 style="font-size:24px">More via API key</h2>
+    <p class="muted" style="margin-top:8px">Connect an API key to track spend and usage. New tools are added regularly.</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; margin-top:20px">
+      {more.map(([n, live]) => (
+        <div class="card reveal" style="padding:14px 16px; display:flex; align-items:center; justify-content:space-between; box-shadow:none">
+          <span style="font-weight:600; font-size:14px">{n}</span>
+          <span style={live
+            ? 'font-size:10px;font-weight:700;color:var(--ok);background:#f0fdf4;border:1px solid #bbf7d0;padding:2px 7px;border-radius:999px'
+            : 'font-size:10px;font-weight:700;color:var(--muted);background:var(--bg-soft);border:1px solid var(--border);padding:2px 7px;border-radius:999px'}>
+            {live ? 'LIVE' : 'SOON'}
+          </span>
+        </div>
+      ))}
+    </div>
+    <p class="muted" style="margin-top:16px; font-size:14px">Want a tool that's not here? <a href="/login" style="color:var(--brand); font-weight:600">Tell us →</a></p>
+  </section>
+
+  <section class="wrap" style="padding:64px 24px 0">
+    <div class="card reveal" style="text-align:center; padding:44px 24px; background:linear-gradient(135deg,#eef2ff,#faf5ff); border-color:#e0e7ff">
+      <h2 style="font-size:28px; max-width:520px; margin:0 auto">Bring your whole AI stack into one view</h2>
+      <div style="margin-top:22px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap">
+        <a class="btn" href="/#pricing">Get started</a>
+        <a class="btn ghost" href="/#pricing">See pricing</a>
+      </div>
+    </div>
+  </section>
+</Base>

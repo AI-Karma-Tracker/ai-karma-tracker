@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+const updated = 'July 11, 2026';
+// Edit these to your real details before publishing.
+const COMPANY = '[Your legal name / company]';
+const EMAIL = 'anliberant@gmail.com';
+const COUNTRY = 'Israel';
+---
+<Base title="Privacy Policy — AI Karma Tracker" description="How AI Karma Tracker handles your data.">
+  <main class="wrap legal" style="max-width:760px; padding:56px 24px 20px">
+    <h1 style="font-size:38px">Privacy Policy</h1>
+    <p class="muted" style="margin-top:8px">Last updated: {updated}</p>
+
+    <p>AI Karma Tracker (“we”, “us”) is a browser extension and website that helps you track AI usage limits. This policy explains what data we handle and why. We keep it minimal on purpose: the extension is built to run on your own machine.</p>
+
+    <h2>The extension runs locally</h2>
+    <p>The extension reads the usage limits of AI tools you are <b>already logged into</b> (Claude, ChatGPT, Codex, Cursor, Grok, Perplexity and others) using your browser’s existing session. Those reads happen in your browser, against those providers’ own endpoints. Your usage data is stored <b>locally</b> in your browser (<code>chrome.storage</code>) and is not transmitted to us.</p>
+
+    <h2>Data we do receive</h2>
+    <p><b>License verification.</b> When you activate Pro, the extension sends your <b>license key</b> to our verification service, which checks it against our payment provider (Creem). We do not receive your card details.</p>
+    <p><b>Billing.</b> Payments are processed by <b>Creem</b>, our Merchant of Record. Creem collects the information needed to take payment and charge tax, and shares with us a limited record: your email, subscription plan and status, and the issued license key. We store this to operate your subscription.</p>
+    <p><b>Telegram alerts (optional).</b> If you connect Telegram, we store a random link code and your Telegram chat ID so our relay can deliver alerts to you. You can disconnect at any time from the extension settings, which removes the link.</p>
+
+    <h2>What we do not do</h2>
+    <p>We do not sell your data. We do not run advertising trackers. We do not collect the contents of your AI conversations — only whether limits are near, which is computed locally.</p>
+
+    <h2>Third parties</h2>
+    <p>We rely on: <b>Creem</b> (payments &amp; tax, as Merchant of Record), <b>Supabase</b> (database and serverless functions that run license verification and store subscription records), <b>Telegram</b> (only if you enable alerts), and the <b>Chrome Web Store</b> (distribution). Each processes data under its own policy.</p>
+
+    <h2>Retention</h2>
+    <p>We keep subscription and license records for as long as your account is active and as required for tax and accounting. Telegram links are kept until you disconnect. You can request deletion of the data we hold by emailing us.</p>
+
+    <h2>Your rights</h2>
+    <p>You may request access to, correction of, or deletion of the personal data we hold about you. Contact <a href={`mailto:${EMAIL}`}>{EMAIL}</a> and we will respond within a reasonable time.</p>
+
+    <h2>Children</h2>
+    <p>AI Karma Tracker is not directed to children under 16 and we do not knowingly collect their data.</p>
+
+    <h2>Changes</h2>
+    <p>We may update this policy; material changes will be reflected by the “last updated” date above.</p>
+
+    <h2>Contact</h2>
+    <p>{COMPANY}, {COUNTRY}. Questions: <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.</p>
+  </main>
+  <style>
+    .legal h2 { font-size:22px; margin:28px 0 6px; }
+    .legal p { margin:10px 0; color:#334155; line-height:1.75; }
+    .legal code { background:var(--bg-soft); padding:2px 6px; border-radius:6px; font-size:14px; }
+    .legal a { color:var(--brand); font-weight:600; }
+  </style>
+</Base>

@@ -1,0 +1,50 @@
+---
+import Base from '../layouts/Base.astro';
+const updated = 'July 11, 2026';
+const COMPANY = '[Your legal name / company]';
+const EMAIL = 'anliberant@gmail.com';
+const COUNTRY = 'Israel';
+---
+<Base title="Terms of Service — AI Karma Tracker" description="The terms for using AI Karma Tracker.">
+  <main class="wrap legal" style="max-width:760px; padding:56px 24px 20px">
+    <h1 style="font-size:38px">Terms of Service</h1>
+    <p class="muted" style="margin-top:8px">Last updated: {updated}</p>
+
+    <p>These terms govern your use of the AI Karma Tracker browser extension and website (the “Service”), provided by {COMPANY} ({COUNTRY}). By installing the extension or purchasing a plan, you agree to these terms.</p>
+
+    <h2>1. What the Service does</h2>
+    <p>The Service reads usage limits from AI tools you are logged into and shows them in one dashboard, with optional alerts. It is an independent tool and is <b>not affiliated with, endorsed by, or sponsored by</b> Anthropic, OpenAI, Google, xAI, Perplexity, Cursor or any other provider. Product names and logos belong to their owners.</p>
+
+    <h2>2. License to use</h2>
+    <p>We grant you a personal, non-exclusive, non-transferable license to use the Service. The Free tier tracks a limited number of sources; paid tiers unlock all providers and additional features. You may not resell, redistribute, or reverse-engineer the Service except as permitted by law.</p>
+
+    <h2>3. Subscriptions &amp; billing</h2>
+    <p>Paid plans are billed monthly or yearly through <b>Creem</b>, our Merchant of Record, who acts as the seller of record and handles payment and tax. Subscriptions renew automatically until cancelled. You can cancel anytime; see our <a href="/refund">Refund &amp; Cancellation Policy</a>. Prices may change with notice; changes apply from your next billing cycle.</p>
+
+    <h2>4. License keys</h2>
+    <p>Pro access is tied to a license key issued on purchase. Keep it private. We may deactivate keys obtained fraudulently or shared in violation of these terms.</p>
+
+    <h2>5. Acceptable use</h2>
+    <p>You agree not to use the Service to break any AI provider’s terms, to circumvent their limits, or for any unlawful purpose. You are responsible for your own accounts with those providers.</p>
+
+    <h2>6. Availability &amp; accuracy</h2>
+    <p>AI providers’ usage endpoints are undocumented and may change or break without notice. We work to keep readings accurate but provide the Service <b>“as is”</b>, without warranty that limits shown are complete, correct, or uninterrupted.</p>
+
+    <h2>7. Limitation of liability</h2>
+    <p>To the maximum extent permitted by law, we are not liable for indirect or consequential damages, or for any loss arising from reliance on usage numbers shown by the Service. Our total liability is limited to the amount you paid in the previous 12 months.</p>
+
+    <h2>8. Termination</h2>
+    <p>You may stop using the Service at any time. We may suspend or terminate access for breach of these terms. On termination, the license to use the Service ends.</p>
+
+    <h2>9. Governing law</h2>
+    <p>These terms are governed by the laws of {COUNTRY}, without regard to conflict-of-law rules.</p>
+
+    <h2>10. Contact</h2>
+    <p>Questions about these terms: <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.</p>
+  </main>
+  <style>
+    .legal h2 { font-size:22px; margin:28px 0 6px; }
+    .legal p { margin:10px 0; color:#334155; line-height:1.75; }
+    .legal a { color:var(--brand); font-weight:600; }
+  </style>
+</Base>

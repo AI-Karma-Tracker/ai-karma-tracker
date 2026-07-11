@@ -1,0 +1,211 @@
+---
+const cfg = {
+  url: import.meta.env.PUBLIC_SUPABASE_URL ?? '',
+  anon: import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? '',
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Admin — AI Karma Tracker</title>
+    <style>
+      :root { --brand:#6366f1; --border:#e6e8ef; --muted:#64748b; --bg:#f6f7fb; --ok:#16a34a; --err:#dc2626; }
+      * { box-sizing:border-box; }
+      body { margin:0; font:15px/1.5 ui-sans-serif,system-ui,sans-serif; color:#0f172a; background:var(--bg); }
+      .top { background:#fff; border-bottom:1px solid var(--border); padding:14px 22px; display:flex; align-items:center; justify-content:space-between; }
+      .top b { font-weight:800; }
+      .wrap { max-width:1040px; margin:0 auto; padding:24px 22px 60px; }
+      .card { background:#fff; border:1px solid var(--border); border-radius:14px; box-shadow:0 1px 2px rgba(16,24,40,.04); }
+      .muted { color:var(--muted); }
+      button { cursor:pointer; border:1px solid var(--border); background:#fff; border-radius:9px; padding:8px 12px; font-weight:600; font-size:14px; }
+      button.pri { background:var(--brand); color:#fff; border-color:var(--brand); }
+      button.danger { color:var(--err); border-color:#fecaca; background:#fef2f2; }
+      input { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:9px; font-size:15px; }
+      table { width:100%; border-collapse:collapse; font-size:14px; }
+      th, td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); }
+      th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+      .tabs { display:flex; gap:6px; margin:20px 0; }
+      .tabs button.on { background:#eef2ff; border-color:#c7d2fe; color:#3730a3; }
+      .kpi { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; }
+      .kpi .card { padding:16px 18px; }
+      .kpi .n { font-size:28px; font-weight:800; }
+      .pill { font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; }
+      .pill.on { color:var(--ok); background:#f0fdf4; border:1px solid #bbf7d0; }
+      .pill.off { color:var(--muted); background:#f1f5f9; border:1px solid var(--border); }
+      .row-actions { display:flex; gap:8px; }
+      .hidden { display:none; }
+      .login { max-width:380px; margin:80px auto; }
+    </style>
+  </head>
+  <body>
+    <div class="top"><b>AI Karma Tracker · Admin</b><button id="logout" class="hidden">Log out</button></div>
+
+    <!-- Login -->
+    <div id="login" class="login card" style="padding:24px">
+      <h2 style="margin:0 0 4px">Admin sign in</h2>
+      <p class="muted" style="margin:0 0 16px; font-size:14px">Use your Supabase admin account.</p>
+      <div id="loginErr" class="muted" style="color:var(--err); font-size:13px; margin-bottom:10px"></div>
+      <label class="muted" style="font-size:13px">Email</label>
+      <input id="email" type="email" style="margin:6px 0 12px" />
+      <label class="muted" style="font-size:13px">Password</label>
+      <input id="password" type="password" style="margin:6px 0 16px" />
+      <button id="signin" class="pri" style="width:100%">Sign in</button>
+    </div>
+
+    <!-- App -->
+    <div id="app" class="wrap hidden">
+      <div class="tabs">
+        <button data-tab="dash" class="on">Dashboard</button>
+        <button data-tab="subs">Customers</button>
+        <button data-tab="access">Access</button>
+        <button data-tab="flags">Feature flags</button>
+      </div>
+
+      <section data-panel="dash">
+        <div class="kpi" id="kpis"></div>
+        <div class="card" style="margin-top:16px; padding:16px 18px">
+          <h3 style="margin:0 0 8px; font-size:15px">Recent events</h3>
+          <div id="events" class="muted" style="font-size:13px">Loading…</div>
+        </div>
+      </section>
+
+      <section data-panel="subs" class="hidden">
+        <div class="card" style="overflow:auto">
+          <table><thead><tr><th>Email</th><th>Plan</th><th>Status</th><th>Period</th><th>Renews</th></tr></thead>
+          <tbody id="subsBody"></tbody></table>
+        </div>
+      </section>
+
+      <section data-panel="access" class="hidden">
+        <div class="card" style="padding:18px; max-width:520px">
+          <h3 style="margin:0 0 10px; font-size:15px">Grant Pro manually</h3>
+          <div style="display:flex; gap:8px">
+            <input id="grantEmail" type="email" placeholder="user@example.com" />
+            <button id="grantBtn" class="pri" style="white-space:nowrap">Grant Pro</button>
+          </div>
+          <p id="grantMsg" class="muted" style="font-size:13px; margin-top:8px"></p>
+        </div>
+        <div class="card" style="margin-top:16px; overflow:auto">
+          <table><thead><tr><th>Email</th><th>Key</th><th>Source</th><th>Status</th><th></th></tr></thead>
+          <tbody id="licBody"></tbody></table>
+        </div>
+      </section>
+
+      <section data-panel="flags" class="hidden">
+        <div class="card" style="overflow:auto">
+          <table><thead><tr><th>Flag</th><th>State</th><th></th></tr></thead>
+          <tbody id="flagsBody"></tbody></table>
+        </div>
+      </section>
+    </div>
+
+    <script type="module" is:inline define:vars={{ cfg }}>
+      import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+      const sb = createClient(cfg.url, cfg.anon);
+      const $ = (id) => document.getElementById(id);
+      const show = (el, on) => el.classList.toggle('hidden', !on);
+
+      function key() { const r = () => crypto.randomUUID().replace(/-/g,'').slice(0,8).toUpperCase(); return `${r()}-${r()}-${r()}-${r()}`; }
+      function monthly(s) { const a = Number(s.amount||0); return s.billing_period === 'year' ? a/12 : a; }
+
+      async function boot() {
+        const { data: { session } } = await sb.auth.getSession();
+        if (session) return enterApp();
+        show($('login'), true); show($('app'), false); show($('logout'), false);
+      }
+
+      $('signin').onclick = async () => {
+        $('loginErr').textContent = '';
+        const { error } = await sb.auth.signInWithPassword({ email: $('email').value.trim(), password: $('password').value });
+        if (error) { $('loginErr').textContent = error.message; return; }
+        enterApp();
+      };
+      $('logout').onclick = async () => { await sb.auth.signOut(); location.reload(); };
+
+      async function enterApp() {
+        show($('login'), false); show($('app'), true); show($('logout'), true);
+        await Promise.all([loadDash(), loadSubs(), loadLicenses(), loadFlags()]);
+      }
+
+      // Tabs
+      document.querySelectorAll('.tabs button').forEach((b) => b.onclick = () => {
+        document.querySelectorAll('.tabs button').forEach((x) => x.classList.toggle('on', x === b));
+        document.querySelectorAll('[data-panel]').forEach((p) => show(p, p.getAttribute('data-panel') === b.getAttribute('data-tab')));
+      });
+
+      async function loadDash() {
+        const { data: subs } = await sb.from('subscriptions').select('*');
+        const rows = subs || [];
+        const active = rows.filter((s) => s.status === 'active' || s.status === 'trialing');
+        const mrr = active.reduce((a, s) => a + monthly(s), 0);
+        const byPlan = (p) => active.filter((s) => s.plan === p).length;
+        $('kpis').innerHTML = [
+          ['Active subs', active.length],
+          ['MRR', '$' + mrr.toFixed(2)],
+          ['Hobbyist', byPlan('hobbyist')],
+          ['Expert', byPlan('expert')],
+        ].map(([l, n]) => `<div class="card"><div class="muted" style="font-size:13px">${l}</div><div class="n">${n}</div></div>`).join('');
+
+        const { data: ev } = await sb.from('webhook_events').select('event_type, created_at').order('created_at', { ascending: false }).limit(10);
+        $('events').innerHTML = (ev && ev.length)
+          ? ev.map((e) => `<div style="display:flex;justify-content:space-between;padding:4px 0"><span>${e.event_type||'—'}</span><span class="muted">${new Date(e.created_at).toLocaleString()}</span></div>`).join('')
+          : 'No events yet.';
+      }
+
+      async function loadSubs() {
+        const { data } = await sb.from('subscriptions').select('*').order('updated_at', { ascending: false });
+        $('subsBody').innerHTML = (data || []).map((s) => `<tr>
+          <td>${s.email}</td><td>${s.plan||'—'}</td>
+          <td><span class="pill ${s.status==='active'||s.status==='trialing'?'on':'off'}">${s.status||'—'}</span></td>
+          <td>${s.billing_period||'—'}</td>
+          <td class="muted">${s.current_period_end ? new Date(s.current_period_end).toLocaleDateString() : '—'}</td></tr>`).join('')
+          || '<tr><td colspan="5" class="muted" style="padding:16px">No subscriptions yet.</td></tr>';
+      }
+
+      async function loadLicenses() {
+        const { data } = await sb.from('licenses').select('*').order('created_at', { ascending: false });
+        $('licBody').innerHTML = (data || []).map((l) => `<tr>
+          <td>${l.email}</td><td style="font-family:ui-monospace,monospace;font-size:12px">${l.license_key}</td>
+          <td>${l.source}</td>
+          <td><span class="pill ${l.active?'on':'off'}">${l.active?'active':'revoked'}</span></td>
+          <td class="row-actions">${l.active
+            ? `<button class="danger" data-revoke="${l.id}">Revoke</button>`
+            : `<button data-enable="${l.id}">Re-enable</button>`}</td></tr>`).join('')
+          || '<tr><td colspan="5" class="muted" style="padding:16px">No licenses yet.</td></tr>';
+        $('licBody').querySelectorAll('[data-revoke]').forEach((b) => b.onclick = async () => {
+          await sb.from('licenses').update({ active: false, revoked_at: new Date().toISOString() }).eq('id', b.getAttribute('data-revoke')); loadLicenses();
+        });
+        $('licBody').querySelectorAll('[data-enable]').forEach((b) => b.onclick = async () => {
+          await sb.from('licenses').update({ active: true, revoked_at: null }).eq('id', b.getAttribute('data-enable')); loadLicenses();
+        });
+      }
+
+      $('grantBtn').onclick = async () => {
+        const email = $('grantEmail').value.trim().toLowerCase();
+        if (!email) return;
+        const { error } = await sb.from('licenses').insert({ email, license_key: key(), source: 'manual', active: true });
+        $('grantMsg').textContent = error ? ('Error: ' + error.message) : 'Granted ✓ (key generated)';
+        $('grantEmail').value = ''; loadLicenses();
+      };
+
+      async function loadFlags() {
+        const { data } = await sb.from('feature_flags').select('*').order('key');
+        $('flagsBody').innerHTML = (data || []).map((f) => `<tr>
+          <td><b>${(f.meta&&f.meta.label)||f.key}</b><div class="muted" style="font-size:12px">${f.key}</div></td>
+          <td><span class="pill ${f.enabled?'on':'off'}">${f.enabled?'LIVE':'SOON'}</span></td>
+          <td><button data-flag="${f.key}" data-on="${f.enabled}">${f.enabled?'Disable':'Enable'}</button></td></tr>`).join('')
+          || '<tr><td colspan="3" class="muted" style="padding:16px">No flags.</td></tr>';
+        $('flagsBody').querySelectorAll('[data-flag]').forEach((b) => b.onclick = async () => {
+          const on = b.getAttribute('data-on') === 'true';
+          await sb.from('feature_flags').update({ enabled: !on, updated_at: new Date().toISOString() }).eq('key', b.getAttribute('data-flag'));
+          loadFlags();
+        });
+      }
+
+      boot();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const fmt = (d) => d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+---
+<Base title={`${post.data.title} — AI Karma Tracker`} description={post.data.description}>
+  <article class="wrap" style="max-width:720px; padding-top:56px">
+    <a href="/blog" class="muted" style="font-size:14px">← All posts</a>
+    <div style="display:flex; gap:8px; align-items:center; font-size:13px; margin-top:18px">
+      <span style="font-weight:700; color:var(--brand-ink); background:#eef2ff; border:1px solid #e0e7ff; padding:2px 8px; border-radius:999px">{post.data.tag}</span>
+      <span class="muted">{fmt(post.data.date)} · {post.data.readMins} min read</span>
+    </div>
+    <h1 style="font-size:38px; margin-top:14px">{post.data.title}</h1>
+    <p class="muted" style="font-size:18px; margin-top:12px">{post.data.description}</p>
+    <div class="prose"><Content /></div>
+
+    <div class="card" style="margin-top:40px; padding:24px; text-align:center; background:linear-gradient(135deg,#eef2ff,#faf5ff); border-color:#e0e7ff">
+      <b style="font-size:18px">Track your real limits</b>
+      <p class="muted" style="margin:8px auto 0; max-width:420px; font-size:15px">See live usage, resets and peak-hour alerts across your whole AI stack.</p>
+      <a class="btn" style="margin-top:16px" href="/#pricing">Add to Chrome — free</a>
+    </div>
+  </article>
+
+  <style is:global>
+    .prose { margin-top:28px; font-size:17px; line-height:1.75; }
+    .prose h2 { font-size:24px; margin:32px 0 10px; }
+    .prose h3 { font-size:19px; margin:24px 0 8px; }
+    .prose p { margin:14px 0; }
+    .prose ul, .prose ol { margin:14px 0; padding-left:24px; }
+    .prose li { margin:6px 0; }
+    .prose strong { font-weight:700; }
+    .prose a { color:var(--brand); text-decoration:underline; }
+    .prose code { background:var(--bg-soft); padding:2px 6px; border-radius:6px; font-size:15px; }
+  </style>
+</Base>
