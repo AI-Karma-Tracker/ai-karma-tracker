@@ -3,16 +3,15 @@ import Base from '../layouts/Base.astro';
 import { logo } from '../lib/logos';
 
 const chromeUrl = import.meta.env.PUBLIC_CHROME_URL ?? '#';
-// Creem hosted-checkout links (one per product/period). Grab each product's
-// "Share" checkout URL from the Creem dashboard and set these env vars.
-const creem = {
+// Gumroad checkout links (one per product/period), public permalinks.
+const gumroad = {
   hobby: {
-    monthly: import.meta.env.PUBLIC_CREEM_CHECKOUT_HOBBY_M ?? '',
-    yearly: import.meta.env.PUBLIC_CREEM_CHECKOUT_HOBBY_Y ?? '',
+    monthly: 'https://brutalthemes.gumroad.com/l/hobbyist-monthly',
+    yearly: 'https://brutalthemes.gumroad.com/l/hobbyist-yearly',
   },
   expert: {
-    monthly: import.meta.env.PUBLIC_CREEM_CHECKOUT_EXPERT_M ?? '',
-    yearly: import.meta.env.PUBLIC_CREEM_CHECKOUT_EXPERT_Y ?? '',
+    monthly: 'https://brutalthemes.gumroad.com/l/expert-monthly',
+    yearly: 'https://brutalthemes.gumroad.com/l/expert-yearly',
   },
 };
 
@@ -23,7 +22,6 @@ const firstClass = [
   { name: 'Cursor', what: 'Monthly fast-request quota', color: '#0B0B0C' },
   { name: 'Grok', what: 'Per-window request quota', color: '#111827' },
   { name: 'Perplexity', what: 'Pro-search allowance', color: '#20808D' },
-  { name: 'Gemini', what: 'Login & peak-hour activity', color: '#4285F4' },
 ];
 const features = [
   { t: 'Live limits', d: 'Real remaining tokens, messages and reset times read straight from your own sessions — no API keys required.', i: '📊' },
@@ -35,9 +33,9 @@ const features = [
 ];
 const faqs = [
   ['Do I need to paste API keys?', 'No. Limit tracking reads your existing logged-in sessions in the browser. API keys are only optional, for tools that have no web session (like Claude Code).'],
-  ['Which tools are fully tracked?', 'Claude, ChatGPT, Codex, Cursor, Grok and Perplexity get live limit numbers today. Gemini shows activity (Google exposes no usage API). More are on the way.'],
+  ['Which tools are fully tracked?', 'Claude, ChatGPT, Codex, Cursor, Grok and Perplexity get live limit numbers today. More are on the way.'],
   ['Is my data private?', 'Yes — the extension runs entirely in your browser. Usage is stored locally; nothing is sent to us.'],
-  ['How does billing work?', 'Payments are handled securely by Creem, our Merchant of Record. You can switch monthly/yearly or cancel anytime from the billing portal.'],
+  ['How does billing work?', 'Payments are handled securely by Gumroad. You can switch monthly/yearly or cancel anytime from the billing portal.'],
 ];
 ---
 <Base>
@@ -136,10 +134,10 @@ const faqs = [
       <div class="card reveal" style="padding:26px">
         <h3 style="font-size:20px">Free</h3>
         <div style="margin:12px 0 4px"><span style="font-size:40px; font-weight:800">$0</span></div>
-        <p class="muted" style="font-size:14px">Track 2 sources</p>
+        <p class="muted" style="font-size:14px">Track 1 source</p>
         <a class="btn ghost" style="width:100%; margin-top:18px" href={chromeUrl}>Add to Chrome</a>
         <ul class="plan">
-          <li>Track any 2 AI tools</li>
+          <li>Track any 1 AI tool of your choice</li>
           <li>Live limits &amp; reset times</li>
           <li>Peak-hour &amp; reset alerts</li>
         </ul>
@@ -176,7 +174,7 @@ const faqs = [
         </ul>
       </div>
     </div>
-    <p class="muted" style="text-align:center; margin-top:16px; font-size:13px">Secure checkout by Creem · cancel anytime</p>
+    <p class="muted" style="text-align:center; margin-top:16px; font-size:13px">Secure checkout by Gumroad · cancel anytime</p>
   </section>
 
   <section class="wrap" style="padding:80px 24px 0; max-width:760px">
@@ -276,8 +274,8 @@ const faqs = [
     })();
   </script>
 
-  <!-- Creem checkout (static hosted links) -->
-  <script is:inline define:vars={{ creem }}>
+  <!-- Gumroad checkout (static hosted links) -->
+  <script is:inline define:vars={{ gumroad }}>
     (function () {
       var billing = 'monthly';
       var PRICES = {
@@ -305,8 +303,8 @@ const faqs = [
       document.querySelectorAll('[data-checkout]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var plan = btn.getAttribute('data-checkout');
-          var url = creem[plan] && creem[plan][billing];
-          if (!url) { alert('Checkout is not configured yet. Set your Creem checkout links.'); return; }
+          var url = gumroad[plan] && gumroad[plan][billing];
+          if (!url) { alert('Checkout is not configured yet. Set your Gumroad checkout links.'); return; }
           window.location.href = url;
         });
       });
